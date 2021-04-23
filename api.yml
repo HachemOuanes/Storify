@@ -1,0 +1,767 @@
+swagger: "2.0"
+info:
+  description: "This a Documentation of your API for the Assignment"
+  version: "1.0.0"
+  title: "Storify"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "omar.belguith@alumni.medtech.tn"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:3000"
+basePath: "/api"
+tags:
+- name: "Auth"
+  description: "Everything about Authentication"
+- name: "Lists"
+  description: "Access to Storify Lists"
+- name: "Items"
+  description: "Operations about Items"
+- name: "Categories"
+  description: "Operations about Items"
+schemes:
+- "https"
+- "http"
+paths:
+  /login:
+    post:
+      tags:
+      - "Auth"
+      summary: "Authenticate a user to your Platform"
+      description: ""
+      operationId: "login"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User Credentials"
+        required: true
+        schema:
+          $ref: "#/definitions/LoginRequest"
+      responses:
+        201:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+  /signup:
+    post:
+      tags:
+      - "Auth"
+      summary: "Registering a User"
+      operationId: "signup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Email and password to authenticate"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        201:
+          description: "successful operation"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+  /getUser:
+    get:
+      operationId: "getUser"
+      summary: "Get the connected user informations"
+      tags: 
+      - "Auth"
+      responses:
+        200:
+          description: "Success"
+          schema:
+           $ref: "#/definitions/User"
+        401:
+          $ref: "#/responses/401"
+        404:
+          $ref: "#/responses/404"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  
+  /lists:
+    get:
+      summary: "Fetch all the connected user lists"
+      operationId: "getLists"
+      tags:
+        - "Lists"
+      produces:
+        - "applicatin/json"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ListArray"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+          
+    post:
+      summary: "Create a list for the connected user"
+      operationId: "createList"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to create a list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                example: "List name"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/List"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  /lists/{list_id}:
+    put:
+      operationId: "updateList"
+      summary: "Update a list for the connected user"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to update a list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                example: "List name"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/List"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    delete:
+      summary: "Delete a list for the connected user"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to delete a list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+          
+  /lists/{list_id}/items:
+    get:
+      summary: "Fetch all the connected user items of a certain list"
+      operationId: "getItemsOfList"
+      description: "This endpoint allows user to get an item of a specific list"
+
+      tags:
+        - "Lists"
+      produces:
+        - "applicatin/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        201:
+          description: "Success"
+          schema:
+            type: "array"
+            items:          
+              $ref: "#/definitions/Item"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    post:
+      summary: "Add an Item to a specific list for the user"
+      operationId: "createItemInList"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to add an item to a specific list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - item_id
+              - list_id
+            properties:
+              item_id:
+                type: "number"
+              list_id:
+                type: "number"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/List"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    put:
+      summary: "Update an Item of a specific list for the user"
+      operationId: "updateItemOfList"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to update an item in a list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - item_id
+              - list_id
+            properties:
+              item_id:
+                type: "number"
+              list_id:
+                type: "number"
+              name:
+                type: "string"
+              image:
+                type: "string"
+              category_id:
+                type: "number"
+              note:
+                type: "string"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Item"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    delete:
+      summary: "Delete an Item of a specific list for the user"
+      operationId: "DeleteItemOfList"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to delete an item in a list"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: list_id
+          in: path
+          description: ID of list to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  
+  /items:
+    get:
+      summary: "Fetch all the connected user items"
+      operationId: "getItems"
+      tags:
+        - "Items"
+      produces:
+        - "applicatin/json"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Item"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+          
+    post:
+      summary: "Create an Item for the connected user"
+      operationId: "createItem"
+      tags:
+        - "Items"
+      description: "This endpoint allows user to create an item"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+              - image
+              - note
+              - category_id
+            properties:
+              name:
+                type: "string"
+              image:
+                type: "string"
+              note:
+                type: "string"
+              category_id:
+                type: "number"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Item"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  /items/{item_id}:
+    put:
+      summary: "Update an Item of a user"
+      operationId: "updateItem"
+      tags:
+        - "Items"
+      description: "This endpoint allows user to update an item"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: item_id
+          in: path
+          description: ID of item to fetch
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+              - image
+              - note
+              - category_id
+            properties:
+              name:
+                type: "string"
+              image:
+                type: "string"
+              category_id:
+                type: "number"
+              note:
+                type: "string"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Item"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    delete:
+      summary: "Delete an Item of a user"
+      operationId: "DeleteItem"
+      tags:
+        - "Lists"
+      description: "This endpoint allows user to delete an item"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: item_id
+          in: path
+          description: ID of item to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  /categories:
+    get:
+      summary: "Fetch all the connected user categories"
+      operationId: "getCategories"
+      tags:
+        - "Categories"
+      produces:
+        - "applicatin/json"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Category"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+          
+    post:
+      summary: "Create a Category for the connected user"
+      operationId: "crateCategory"
+      tags:
+        - "Categories"
+      description: "This endpoint allows user to create a Category"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+            properties:
+              name:
+                type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Category"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+  /categories/{category_id}:
+    put:
+      summary: "Update a Category of a user"
+      operationId: "updateCategory"
+      tags:
+        - "Categories"
+      description: "This endpoint allows user to update a Category"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: category_id
+          in: path
+          description: ID of item to category
+          required: true
+          type: integer
+          format: int64
+        - in: "body"
+          name: "body"
+          schema:
+            type: "object"
+            required:
+              - name
+            properties:
+              name:
+                type: "string"
+      responses:
+        201:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Category"
+        401:
+          $ref: "#/responses/401"
+        422:
+          $ref: "#/responses/422"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+    delete:
+      summary: "Delete a Category of a user"
+      operationId: "deleteCategory"
+      tags:
+        - "Categories"
+      description: "This endpoint allows user to delete an item"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: category_id
+          in: path
+          description: ID of Category to fetch
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: "Success"
+        401:
+          $ref: "#/responses/401"
+        500:
+          $ref: "#/responses/500"
+      security:
+       - basicAuth: []
+       
+securityDefinitions:
+  basicAuth:
+    type: basic
+    
+responses:
+  400:
+    description: Bad Request
+    schema:
+      $ref: "#/definitions/Error"
+  401:
+    description: Unauthorized
+    schema:
+      $ref: "#/definitions/Error"
+  404:
+    description: Not Found
+    schema:
+      $ref: "#/definitions/Error"
+  422:
+    description: Validation Error
+    schema:
+      $ref: "#/definitions/ValidationError"
+  500:
+    description: Internal Server Error
+    schema:
+      $ref: "#/definitions/Error"
+definitions:
+  LoginRequest:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "username@gmail.com"
+      password:
+        type: "string"
+        example: "myPassword123"
+  LoginResponse:
+    type: "object"
+    properties:
+      user:
+       type: "object"
+       example:
+        $ref: "#/definitions/User"
+      token:
+        type: "string"
+        example: "qlkjyzqsd325.!qspuezappz"
+            
+  User:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "username@gmail.com"
+      password:
+        type: "string"
+        example: "MyPassword123"
+      userName:
+        type: "string"
+        example: "Username123"
+        
+  List:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      user_id:
+        type: "integer"
+      created_at:
+        type: "string"
+      updated_at:
+        type: "string"
+        
+  ListArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/List"
+      
+  Item:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      category_id:
+        type: "integer"
+      user_id:
+        type: "integer"
+      note:
+        type: "string"
+      image:
+        type: "string"
+      created_at:
+        type: "string"
+      updated_at:
+        type: "string"
+        
+  Category:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 1
+      name:
+        type: "string"
+        example: "Category"
+      user_id:
+        type: "integer"
+        example: 1
+      created_at:
+        type: "string"
+        example: "2020-09-02T14:48:41.919Z"
+      updated_at:
+        type: "string"
+        example: "2020-09-02T14:48:41.919Z"
+        
+  Error:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "error"
+      message:
+        type: "string"
+
+  ValidationError:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        example: "error"
+      field:
+        type: "string"
+      message:
+        type: "string"
+  
