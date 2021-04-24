@@ -1,8 +1,9 @@
 const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose'); 
 const user = require('../Models/users');
 const bcrypt = require('bcrypt');
+
+const router = express.Router();
 
 router.post('/', async (req, res, next) => {
     await bcrypt.hash(req.body.password, 10, (err, hash) => {

@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const signup = require('./Routes/signup.js');
+const getuser = require('./Routes/getuser'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.get('/', (req, res, next) => {
 
 
 app.use('/api/signup', signup);
+app.use('/api/getuser', getuser);
 
 
 app.listen(PORT, () => {
