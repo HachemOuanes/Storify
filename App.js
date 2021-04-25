@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const signup = require('./Routes/signup.js');
 const getuser = require('./Routes/getuser'); 
+const login = require('./Routes/login'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,14 +17,16 @@ db.once('open',() => {
 
 app.use(express.json());
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     console.log('Home Page Acess');
     res.send('<h1>STORIFY!<h1>');
 })
 
 
 app.use('/api/signup', signup);
+app.use('/api/login', login); 
 app.use('/api/getuser', getuser);
+
 
 
 app.listen(PORT, () => {

@@ -14,8 +14,8 @@ router.get('/', (req, res, next) => {
             })
         }
         else {
-            console.log(result); 
-            res.status(201).json(result[0].email);
+            console.log(result);
+            res.status(201).json(result);
         }
     })
 })

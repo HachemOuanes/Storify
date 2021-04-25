@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 const router = express.Router();
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     await bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
             return res.status(500).json({
@@ -19,12 +19,11 @@ router.post('/', async (req, res, next) => {
                 password: hash,
                 username: req.body.username
             });
-            console.log(newuser);
             newuser
                 .save()
                 .then(result => {
-                    console.log(result);
-                    res.status(201).json('successful operation');
+                    console.log(`${result.username} Registered!`);
+                    res.status(201).json('Successful operation');
                 })
                 .catch(err => {
                     console.log(err);
