@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const users = require('../Models/users');
 const bcrypt = require('bcrypt');
 
@@ -8,18 +8,34 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     await users.find({ email: req.body.email })
         .exec()
-        .then(async user => {
-            if ((typeof user[0]) == 'undefined') {
-                return res.status(400).json('User not found');
+        .then(async found => {
+            const user = found[0]; 
+            if ((typeof user) == 'undefined') {
+                return res.status(400).json({
+                    status : 'error',
+                    message : 'user not found'
+                });
             }
-            await bcrypt.compare(req.body.password, user[0].password)
+            await bcrypt.compare(req.body.password, user.password)
                 .then(result => {
                     if (result) {
-                        res.status(201).json('Successful operation');
-                        console.log(`${user[0].username} Logged in`);
+                        const token = jwt.sign({
+                            id: user._id,
+                            username: user.username
+                        },
+                            process.env.ACCESS_SECRET);
+                        res.status(201).json({
+                            status: "ok",
+                            accessToken: token
+                        });
+                        console.log(`${user.username} : Logged in`);
+
                     }
                     else {
-                        res.status(422).json('Validation Error');
+                        res.status(422).json({
+                            status : 'error', 
+                            message : 'invalid password'
+                        });
                     }
                 })
                 .catch(err => {

@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose'); 
 const user = require('../Models/users');
 const bcrypt = require('bcrypt');
 
@@ -22,7 +21,7 @@ router.post('/', async (req, res) => {
             newuser
                 .save()
                 .then(result => {
-                    console.log(`${result.username} Registered!`);
+                    console.log(`${result.username} : Registered`);
                     res.status(201).json('Successful operation');
                 })
                 .catch(err => {

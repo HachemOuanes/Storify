@@ -1,12 +1,11 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const users = require('../Models/users');
+const authorize = require('../authorization');
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    users.find({}, (err, result) => {
+router.get('/', authorize, (req, res) => {
+    users.find({ _id: req.user.id }, (err, result) => {
         if (err) {
             return res.status(500).json({
                 status: 'error',
@@ -14,10 +13,12 @@ router.get('/', (req, res, next) => {
             })
         }
         else {
-            console.log(result);
+
             res.status(201).json(result);
         }
     })
 })
+
+
 
 module.exports = router;

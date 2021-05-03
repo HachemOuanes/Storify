@@ -8,7 +8,7 @@
     "dev": "nodemon App.js"
   },
   "author": "Hachem Ouanes",
-  "license": "ISC",
+  "license": "UNLISCENCE",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",

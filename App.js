@@ -8,7 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ATLAS = process.env.MONGO_PASSWORD;
 
-mongoose.connect(`mongodb+srv://Hachem:${ATLAS}@storifydb.vkf6u.mongodb.net/test`, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(`mongodb+srv://Hachem:${ATLAS}@storifydb.vkf6u.mongodb.net/test`, {useNewUrlParser: true, useUnifiedTopology: true})
+.catch (() =>{
+  console.log('Connection Timedout');
+});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',() => {

@@ -1,5 +1,7 @@
 {
     "env" : {
-        "MONGO_PASSWORD" : "Mongo" 
+        "MONGO_PASSWORD" : "Mongo" ,
+        "ACCESS_SECRET" : "92331f22789315a70ae7690a83f47c82545d9436f4ba9a53dbc9b56a28019af8c29b5c312200298b805f4ec9ce14ec402c1d2c66b8ed467d2631b9ee591b3465",
+        "REFRESH_SECRET" : "2ea385666508f02ea25e7d5f39227c867e3bfacec81cabf573b358cecda69c1dac096c9b116474bdfe4f6ddc372a499b1ec67b332bcb8fe89eb35b974853a37f"
     }
 }
