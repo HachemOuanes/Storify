@@ -4,7 +4,7 @@ const authorize = require('../authorization');
 
 const router = express.Router();
 
-router.get('/', authorize, (req, res) => {
+router.get('/', authorize, async (req, res) => {
     users.findOne({ _id: req.user.id })
         .exec()
         .then(user => {

@@ -5,7 +5,7 @@ const users = require('../../Models/users')
 
 const router = express.Router();
 
-router.post('/', authorize, (req, res) => {
+router.post('/', authorize, async (req, res) => {
     users.findOne({ _id: req.user.id })
         .exec()
         .then(user => {
@@ -36,7 +36,7 @@ router.post('/', authorize, (req, res) => {
         })
 })
 
-router.get('/', authorize, (req, res) => {
+router.get('/', authorize, async (req, res) => {
     lists.findOne({ user_id: req.user.id })
         .exec()
         .then(list => {
@@ -51,7 +51,7 @@ router.get('/', authorize, (req, res) => {
         })
 })
 
-router.put('/:id', authorize, (req, res) => {
+router.put('/:id', authorize, async (req, res) => {
     lists.findOneAndUpdate({ _id: req.params.id }, { name: req.body.name, updated_at: new Date() }, { upsert: true, useFindAndModify : false})
         .exec()
         .then(list => {
@@ -67,7 +67,7 @@ router.put('/:id', authorize, (req, res) => {
 })
 
 
-router.delete('/:id', authorize, (req, res) => {
+router.delete('/:id', authorize, async (req, res) => {
     lists.findOneAndDelete({ _id: req.params.id })
         .exec()
         .then(list => {
