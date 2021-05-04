@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
             const newuser = new user({
                 email: req.body.email,
                 password: hash,
-                username: req.body.username
+                username: req.body.userName
             });
             newuser
                 .save()
@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
                 })
                 .catch(err => {
                     console.log(err);
-                    res.status(403).json({
+                    res.status(422).json({
                         status: "error",
                         message: err
                     })

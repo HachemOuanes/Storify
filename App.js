@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const signup = require('./Routes/signup.js');
 const getuser = require('./Routes/getuser'); 
 const login = require('./Routes/login'); 
+const userlists = require('./Routes/Lists/userlist'); 
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/signup', signup);
 app.use('/api/login', login); 
 app.use('/api/getuser', getuser);
+app.use('/api/lists', userlists); 
 
 
 

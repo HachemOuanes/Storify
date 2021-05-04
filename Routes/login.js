@@ -6,14 +6,13 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    await users.find({ email: req.body.email })
+    await users.findOne({ email: req.body.email })
         .exec()
-        .then(async found => {
-            const user = found[0]; 
+        .then(async user => {
             if ((typeof user) == 'undefined') {
                 return res.status(400).json({
-                    status : 'error',
-                    message : 'user not found'
+                    status: 'error',
+                    message: 'user not found'
                 });
             }
             await bcrypt.compare(req.body.password, user.password)
@@ -25,7 +24,7 @@ router.post('/', async (req, res) => {
                         },
                             process.env.ACCESS_SECRET);
                         res.status(201).json({
-                            status: "ok",
+                            user,
                             accessToken: token
                         });
                         console.log(`${user.username} : Logged in`);
@@ -33,8 +32,8 @@ router.post('/', async (req, res) => {
                     }
                     else {
                         res.status(422).json({
-                            status : 'error', 
-                            message : 'invalid password'
+                            status: 'error',
+                            message: 'invalid password'
                         });
                     }
                 })
