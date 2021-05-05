@@ -1,24 +1,25 @@
 const express = require('express');
-const authorize = require('../../authorization');
-const lists = require('../../Models/lists');
-const users = require('../../Models/users')
+const authorize = require('../authorization');
+const categories = require('../Models/categories');
+const users = require('../Models/users')
 
 const router = express.Router();
+router.use(authorize);
 
-router.post('/', authorize, async (req, res) => {
+router.post('/', async (req, res) => {
     users.findOne({ _id: req.user.id })
         .exec()
         .then(user => {
-            const newlist = new lists({
+            const newcategory = new categories({
                 name: req.body.name,
                 user_id: user._id,
                 created_at: new Date()
             })
-            newlist
+            newcategory
                 .save()
-                .then(list => {
-                    console.log(`${list.name} : Added`);
-                    res.status(201).json(list);
+                .then(category => {
+                    res.status(201).json(category);
+                    console.log(`${category.name} : Added`);
                 })
                 .catch(err => {
                     console.log(err);
@@ -36,12 +37,12 @@ router.post('/', authorize, async (req, res) => {
         })
 })
 
-router.get('/', authorize, async (req, res) => {
-    lists.findOne({ user_id: req.user.id })
+router.get('/', async (req, res) => {
+    categories.find({ user_id: req.user.id })
         .exec()
-        .then(list => {
-            res.status(201).json(list);
-            console.log(`${list.name} : Accessed`)
+        .then(category => {
+            res.status(201).json(category);
+            console.log(`${req.user.username} : Accessed categories`);
         })
         .catch(err => {
             return res.status(500).json({
@@ -51,12 +52,21 @@ router.get('/', authorize, async (req, res) => {
         })
 })
 
-router.put('/:id', authorize, async (req, res) => {
-    lists.findOneAndUpdate({ _id: req.params.id }, { name: req.body.name, updated_at: new Date() }, { upsert: true, useFindAndModify : false})
+router.put('/:id', async (req, res) => {
+    categories.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+            name: req.body.name,
+            updated_at: new Date()
+        },
+        {
+            upsert: true,
+            useFindAndModify: false
+        })
         .exec()
-        .then(list => {
-            console.log(`${list.name} : Updated`)
-            res.status(201).json(list); 
+        .then(category => {
+            res.status(201).json(category);
+            console.log(`${category.name} : Updated`);
         })
         .catch(err => {
             return res.status(500).json({
@@ -66,13 +76,12 @@ router.put('/:id', authorize, async (req, res) => {
         })
 })
 
-
-router.delete('/:id', authorize, async (req, res) => {
-    lists.findOneAndDelete({ _id: req.params.id })
+router.delete('/:id', async (req, res) => {
+    categories.findOneAndDelete({ _id: req.params.id })
         .exec()
-        .then(list => {
-            console.log(`${list.name} : Deleted`);
-            res.status(201).json('Successful operation'); 
+        .then(category => {
+            res.status(201).json('Successful operation');
+            console.log(`${category.name} : Deleted`);
         })
         .catch(err => {
             return res.status(500).json({

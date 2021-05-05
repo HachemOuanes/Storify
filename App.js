@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const signup = require('./Routes/signup.js');
+const signup = require('./Routes/signup');
 const getuser = require('./Routes/getuser'); 
 const login = require('./Routes/login'); 
-const userlists = require('./Routes/Lists/userlist'); 
+const userlists = require('./Routes/userlist'); 
+const usercategories = require('./Routes/usercategory'); 
+const useritems = require('./Routes/useritem'); 
+
 
 
 const app = express();
@@ -32,6 +35,9 @@ app.use('/api/signup', signup);
 app.use('/api/login', login); 
 app.use('/api/getuser', getuser);
 app.use('/api/lists', userlists); 
+app.use('/api/categories', usercategories); 
+app.use('/api/items', useritems); 
+
 
 
 

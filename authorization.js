@@ -5,7 +5,7 @@ const authorize = (req, res, next) => {
     if ((typeof req.headers.authorization) == 'undefined') {
         return res.status(403).json({
             status: 'error',
-            message: 'jwt undefined'
+            message: 'undefined token'
         })
     }
     else {
@@ -15,7 +15,7 @@ const authorize = (req, res, next) => {
                 console.error(err);
                 return res.status(401).json({
                     status: 'error',
-                    message: 'jwt malformed / expired'
+                    message: 'invalid token'
                 })
             }
             req.user = result;
