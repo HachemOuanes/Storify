@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     await users.findOne({ email: req.body.email })
         .exec()
         .then(async user => {
-            if ((typeof user) == 'undefined') {
+            if (user == null) {
                 return res.status(400).json({
                     status: 'error',
                     message: 'user not found'

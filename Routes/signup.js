@@ -25,7 +25,6 @@ router.post('/', async (req, res) => {
                     res.status(201).json('Successful operation');
                 })
                 .catch(err => {
-                    console.log(err);
                     res.status(422).json({
                         status: "error",
                         message: err

@@ -1,7 +1,8 @@
 const express = require('express');
 const authorize = require('../authorization');
 const lists = require('../Models/lists');
-const users = require('../Models/users')
+const users = require('../Models/users');
+const itemlist = require('./itemlist'); 
 
 const router = express.Router();
 router.use(authorize);
@@ -22,7 +23,6 @@ router.post('/', async (req, res) => {
                     console.log(`${list.name} : Added`);
                 })
                 .catch(err => {
-                    console.log(err);
                     res.status(422).json({
                         status: "error",
                         message: err
@@ -91,6 +91,7 @@ router.delete('/:id', async (req, res) => {
         })
 })
 
+router.use('/', itemlist); 
 
 
 module.exports = router;
