@@ -7,7 +7,8 @@ const router = express.Router();
 router.use(authorize);
 
 router.post('/', async (req, res) => {
-    users.findOne({ _id: req.user.id })
+    const query = { _id: req.user.id };
+    await users.findOne(query)
         .exec()
         .then(user => {
             const newcategory = new categories({
@@ -37,7 +38,8 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-    categories.find({ user_id: req.user.id })
+    const query = { user_id: req.user.id };
+    await categories.find(query)
         .exec()
         .then(category => {
             res.status(201).json(category);
@@ -52,20 +54,24 @@ router.get('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-    categories.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-            name: req.body.name,
-            updated_at: new Date()
-        },
-        {
-            upsert: true,
-            useFindAndModify: false
-        })
+    const query = { _id: req.params.id };
+    const update = { name: req.body.name, updated_at: new Date() };
+    const options = { upsert: true, useFindAndModify: false };
+    await lists.findOneAndUpdate(query, update, options)
         .exec()
         .then(category => {
-            res.status(201).json(category);
-            console.log(`${category.name} : Updated`);
+            category
+            .save()
+            .then(newcategory => {
+                res.status(201).json(newcategory);
+                console.log(`${newcategory.name} : Updated`);
+            })
+            .catch(err => {
+                res.status(422).json({
+                    status: 'error',
+                    message: err
+                })
+            })
         })
         .catch(err => {
             return res.status(500).json({
@@ -76,7 +82,8 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    categories.findOneAndDelete({ _id: req.params.id })
+    const query = { _id: req.params.id };
+    await categories.findOneAndDelete(query)
         .exec()
         .then(category => {
             res.status(201).json('Successful operation');

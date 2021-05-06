@@ -28,7 +28,6 @@ router.post('/', async (req, res) => {
                             accessToken: token
                         });
                         console.log(`${user.username} : Logged in`);
-
                     }
                     else {
                         res.status(422).json({

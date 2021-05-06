@@ -2,13 +2,14 @@ const express = require('express');
 const authorize = require('../authorization');
 const lists = require('../Models/lists');
 const users = require('../Models/users');
-const itemlist = require('./itemlist'); 
+const itemlist = require('./itemlist');
 
 const router = express.Router();
 router.use(authorize);
 
 router.post('/', async (req, res) => {
-    users.findOne({ _id: req.user.id })
+    const query = { _id: req.user.id };
+    await users.findOne(query)
         .exec()
         .then(user => {
             const newlist = new lists({
@@ -38,7 +39,8 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-    lists.find({ user_id: req.user.id })
+    const query = { _id: req.user.id };
+    await lists.find(query)
         .exec()
         .then(list => {
             res.status(201).json(list);
@@ -53,20 +55,24 @@ router.get('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-    lists.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-            name: req.body.name,
-            updated_at: new Date()
-        },
-        {
-            upsert: true,
-            useFindAndModify: false
-        })
+    const query = { _id: req.params.id };
+    const update = { name: req.body.name, updated_at: new Date() };
+    const options = { upsert: true, useFindAndModify: false };
+    await lists.findOneAndUpdate(query, update, options)
         .exec()
         .then(list => {
-            res.status(201).json(list);
-            console.log(`${list.name} : Updated`);
+            list
+                .save()
+                .then(newlist => {
+                    res.status(201).json(newlist);
+                    console.log(`${newlist.name} : Updated`);
+                })
+                .catch(err => {
+                    res.status(422).json({
+                        status: 'error',
+                        message: err
+                    })
+                })
         })
         .catch(err => {
             return res.status(500).json({
@@ -77,7 +83,8 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
-    lists.findOneAndDelete({ _id: req.params.id })
+    const query = { _id: req.user.id };
+    await lists.findOneAndDelete(query)
         .exec()
         .then(list => {
             res.status(201).json('Successful operation');
@@ -91,7 +98,7 @@ router.delete('/:id', async (req, res) => {
         })
 })
 
-router.use('/', itemlist); 
+router.use('/', itemlist);
 
 
 module.exports = router;

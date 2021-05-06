@@ -7,7 +7,8 @@ const router = express.Router();
 router.use(authorize);
 
 router.post('/', async (req, res) => {
-    users.findOne({ _id: req.user.id })
+    const query = { _id: req.user.id };
+    await users.findOne(query)
         .exec()
         .then(user => {
             const newitem = new items({
@@ -41,7 +42,8 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-    items.find({ user_id: req.user.id })
+    const query = { user_id: req.user.id };
+    await items.find(query)
         .exec()
         .then(item => {
             res.status(201).json(item);
@@ -56,34 +58,36 @@ router.get('/', async (req, res) => {
 })
 
 router.put('/:id', async (req, res) => {
-    items.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            note: req.body.note,
-            image: req.body.image,
-            updated_at: new Date(),
-        },
-        {
-            upsert: false,
-            useFindAndModify: false
-        })
-        .exec()
-        .then(item => {
-            res.status(201).json(item);
-            console.log(`${item.name} : Updated`);
-        })
-        .catch(err => {
-            return res.status(500).json({
-                status: 'error',
-                message: err
+    const query = { _id: req.params.id };
+    const update = { name: req.body.name, category_id: req.body.category_id, note: req.body.note, image: req.body.image, updated_at: new Date() };
+    const options = { upsert: true, useFindAndModify: false };
+   await  lists.findOneAndUpdate(query, update, options)
+    .exec()
+    .then(item => {
+        item
+            .save()
+            .then(newitem => {
+                res.status(201).json(newitem);
+                console.log(`${newitem.name} : Updated`);
             })
+            .catch(err => {
+                res.status(422).json({
+                    status: 'error',
+                    message: err
+                })
+            })
+    })
+    .catch(err => {
+        return res.status(500).json({
+            status: 'error',
+            message: err
         })
+    })
 })
 
 router.delete('/:id', async (req, res) => {
-    items.findOneAndDelete({ _id: req.params.id })
+    const query = { _id: req.params.id };
+    await items.findOneAndDelete(query)
         .exec()
         .then(item => {
             res.status(201).json('Successful operation');
