@@ -89,7 +89,7 @@ router.put('/:id/items', async (req, res) => {
                 .save()
                 .then(newlist => {
                     res.status(201).json(newlist);
-                    console.log(`${newlist.name} : Updated`);
+                    console.log(`${newlist.name} item : Updated`);
                 })
                 .catch(err => {
                     res.status(422).json({
